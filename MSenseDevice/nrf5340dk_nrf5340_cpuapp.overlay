@@ -112,6 +112,22 @@
     };
 };
 
+/ {
+	mygpio: mygpio {
+			compatible = "nordic,gpio-pins";
+			gpios = <&gpio0 22 GPIO_ACTIVE_HIGH>;
+			status = "okay";
+	};
+};
+
+&gpio0 {
+        status = "okay";
+};
+
+&gpiote0 {
+        status = "okay";
+};
+
 
 / {
 	chosen {
@@ -342,7 +358,6 @@ compatible = "nordic,nrf-spim";
 	};
 
 };
-
 
 
 

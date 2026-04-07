@@ -17,6 +17,7 @@ extern bool file_system_full;
 extern bool file_system_malfunction;
 extern bool battery_charging;
 
+void timer_init(void);
 
 #define TFMICRO_DATA_LEN 66
 #define PPG_DATA_LEN 18

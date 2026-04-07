@@ -608,6 +608,7 @@ void main(void)
   int global_update = 9;
   int update_time = SLEEP_TIME_MS;
   
+  timer_init();
 
   while (1)
   {

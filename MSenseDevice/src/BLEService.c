@@ -9,6 +9,7 @@
 #include <zephyr/usb/usb_device.h>
 #include "drivers/jdec_nor/custom_qspi.h"
 #include <zephyr/drivers/flash.h>
+#include <zephyr/drivers/gpio.h>
 #include "ppgSensor.h"
 #include "imuSensor.h"
 #include "batteryMonitor.h"
@@ -21,7 +22,6 @@
 #include "zephyr/bluetooth/services/bas.h"
 #include <nrfx_timer.h>
 #include "BLEService.h"
-
 #if CONFIG_DISK_DRIVER_RAW_NAND
 #include "drivers/nand/spi_nand.h"
 #include "drivers/nand/nand_disk.h"
@@ -356,6 +356,21 @@ void timer_handler(nrf_timer_event_t event_type, void* p_context){
   prev_time = k_uptime_get();
   #endif 
 
+  static const struct gpio_dt_spec mygpio = GPIO_DT_SPEC_GET_OR(DT_NODELABEL(mygpio), gpios, {0});
+  static bool nathan_configured = false;
+
+  if (!nathan_configured) {
+      gpio_pin_configure_dt(&mygpio, GPIO_OUTPUT_INACTIVE);
+      collecting_data = false;
+      nathan_configured = true;
+      return;
+  } else if (event_type == NRF_TIMER_EVENT_COMPARE0) {
+    //gpio_pin_set_dt(&mygpio, 1);     // set
+    gpio_pin_set_dt(&mygpio, 0);     // unset
+    //gpio_pin_toggle_dt(&mygpio);     // toggle
+    return;
+  } else return;
+
   if(collecting_data == true){
     switch (event_type){
       case NRF_TIMER_EVENT_COMPARE0:
@@ -403,7 +418,7 @@ static void timer_deinit(void){
 
 
 
-static void timer_init(void){
+void timer_init(void){
 printk("timer init\n");
   uint32_t time_ticks;
   nrfx_err_t          err;
